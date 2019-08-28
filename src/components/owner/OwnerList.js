@@ -6,8 +6,7 @@ import OwnerManager from '../../modules/OwnerManager'
 class OwnerList extends Component {
     //define what this component needs to render
     state = {
-        owners: [],
-        pets: []
+        owners: []
     }
 
     componentDidMount() {
@@ -21,13 +20,38 @@ class OwnerList extends Component {
             })
     }
 
+    deleteOwner = id => {
+        OwnerManager.delete(id)
+            .then(() => {
+                OwnerManager.getAll()
+                    .then((newOwners) => {
+                        this.setState({
+                            owners: newOwners
+                        })
+                    })
+            })
+    }
+
     render() {
         console.log("OWNER LIST: Render");
 
         return (
-            <div className="container-cards">
-                {this.state.owners.map(owner => <OwnerCard key={owner.id} owner={owner}/>)}
-            </div>
+            <>
+                <section className="section-content">
+                    <button type="button"
+                        className="btn"
+                        onClick={() => { this.props.history.push("/owners/new") }}>
+                        Add Owner
+                    </button>
+                </section>
+                <div className="container-cards">
+                    {this.state.owners.map(owner => <OwnerCard
+                        key={owner.id}
+                        owner={owner}
+                        deleteOwner={this.deleteOwner}
+                    />)}
+                </div>
+            </>
         )
     }
 }
